@@ -14,6 +14,11 @@ import java.util.Arrays;
 public class RSACipher implements iCipher {
     private final static BigInteger one = new BigInteger("1");
     private final static SecureRandom random = new SecureRandom();
+    /*Это для правильного хранения набора байтов в BigInteger-е, который для этого вообще-то не предназначен
+    * К исходному тексту добавляется в начале это число, а при расшифровании - удаляется из результата
+    * Если первый байт в списке - отрицательный, то BigInteger считает что и он тоже должен быть отрицательным
+    * Что приводит к неправильной работе с utf-8 encoded строками
+    * */
     private final static byte RSA_MAGIC_HEADER = 100;
     private BigInteger privateKey;
     private BigInteger publicKey;
@@ -31,9 +36,6 @@ public class RSACipher implements iCipher {
         publicKey = new BigInteger("65537");     // common value in practice = 2^16 + 1
         privateKey = publicKey.modInverse(phi);
 
-        System.out.println("public: " + Arrays.toString(publicKey.toByteArray()) + " is: " + publicKey);
-        System.out.println("modulus: " + Arrays.toString(modulus.toByteArray()) + " is:" + modulus);
-        System.out.println("private: " + Arrays.toString(privateKey.toByteArray()) + " is:" + privateKey);
     }
 
     public static byte[] addTag(byte[] arr) {

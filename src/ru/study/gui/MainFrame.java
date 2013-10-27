@@ -145,7 +145,7 @@ public class MainFrame extends JFrame {
     }
 
     private void buttonGetKeyActionPefrormed() {
-        JOptionPane.showMessageDialog(this, "KeyInfo: \n" + cryptoWrapper.getKey());
+        new KeyDialog(this,cryptoWrapper.getKey()).setVisible(true);
         repaint();
     }
 
