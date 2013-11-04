@@ -19,9 +19,7 @@ public class KeyDialog extends JDialog {
         setTitle("Key info");
         final JDialog self = this;
         setLayout(new GridLayout(2, 1));
-        JScrollPane sp = new JScrollPane(new JTextArea(text) {{
-            setVisible(false);
-        }});
+        JScrollPane sp = new JScrollPane(new JTextArea(text));
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         add(sp);
@@ -37,6 +35,5 @@ public class KeyDialog extends JDialog {
         setLocationRelativeTo(owner);
         setPreferredSize(new Dimension(400, 200));
         pack();
-         repaint();
     }
 }

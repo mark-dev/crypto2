@@ -17,7 +17,7 @@ public class RSACipher implements iCipher {
     /*Это для правильного хранения набора байтов в BigInteger-е, который для этого вообще-то не предназначен
     * К исходному тексту добавляется в начале это число, а при расшифровании - удаляется из результата
     * Если первый байт в списке - отрицательный, то BigInteger считает что и он тоже должен быть отрицательным
-    * Что приводит к неправильной работе с utf-8 encoded строками
+    * Что приводит к неправильной работе с список байт у которого первый элемент отрицательный
     * */
     private final static byte RSA_MAGIC_HEADER = 100;
     private BigInteger privateKey;
@@ -25,15 +25,14 @@ public class RSACipher implements iCipher {
     private BigInteger modulus;
     private int maxMsgLen;
 
-    // generate an N-bit (roughly) public and private key
-    public RSACipher(int N) {
-        maxMsgLen = (N / 8 - 1);
-        BigInteger p = BigInteger.probablePrime(N / 2, random);
-        BigInteger q = BigInteger.probablePrime(N / 2, random);
+    public RSACipher(int keyBitLen) {
+        maxMsgLen = (keyBitLen / 8 - 1);
+        BigInteger p = BigInteger.probablePrime(keyBitLen / 2, random);
+        BigInteger q = BigInteger.probablePrime(keyBitLen / 2, random);
         BigInteger phi = (p.subtract(one)).multiply(q.subtract(one));
 
         modulus = p.multiply(q);
-        publicKey = new BigInteger("65537");     // common value in practice = 2^16 + 1
+        publicKey = new BigInteger("65537");
         privateKey = publicKey.modInverse(phi);
 
     }
@@ -66,8 +65,11 @@ public class RSACipher implements iCipher {
 
     @Override
     public String getKeyString() {
-        return String.format("RSA Keys: \n private: %s \n public: %s",
-                privateKey, publicKey);
+        return String.format("RSA Keys: \n " +
+                "private: %s \n " +
+                "modulus: %s \n " +
+                "public: %s",
+                privateKey, modulus,publicKey);
     }
 
     public static boolean eq(byte[] b1, byte[] b2) {
